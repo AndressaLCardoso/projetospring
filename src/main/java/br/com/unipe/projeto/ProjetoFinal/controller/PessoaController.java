@@ -102,11 +102,29 @@ public class PessoaController {
             entidade.setNome(dto.getNome());
             entidade.setSexo(dto.getSexo());
             entidade.setCpf(dto.getCpf());
-//            entidade.setTelefones(dto.getTelefones());
-//            entidade.setEndereco(dto.getEndereco());
+            pessoaRepository.save(entidade);
 
+            Endereco endereco = entidade.getEndereco();
+            endereco.setCep(dto.getEndereco().getCep());
+            endereco.setBairro(dto.getEndereco().getBairro());
+            endereco.setLocalidade(dto.getEndereco().getLocalidade());
+            endereco.setLogradouro(dto.getEndereco().getLogradouro());
+            endereco.setComplemento(dto.getEndereco().getComplemento());
+            endereco.setUf(dto.getEndereco().getUf());
+            endereco.setNumero(dto.getEndereco().getNumero());
+            enderecoRepository.save(endereco);
 
+            List<Telefone> telefones = entidade.getTelefones();
 
+            for(int i = 0; i< telefones.size(); i++){
+                Telefone t = telefones.get(i);
+                t.setPessoa(entidade);
+                t.setNumero(dto.getTelefones().get(i).getNumero());
+                telefoneRepository.save(t);
+            }
+
+            entidade.setEndereco(endereco);
+            entidade.setTelefones(telefones);
 
             pessoaRepository.save(entidade);
             return ResponseEntity.status(200).body("Pessoa "+ entidade.getNome() + " editada com sucesso.");
