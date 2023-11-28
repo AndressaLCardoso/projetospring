@@ -1,12 +1,17 @@
 package br.com.unipe.projeto.ProjetoFinal.controller;
 
+import br.com.unipe.projeto.ProjetoFinal.model.Endereco;
 import br.com.unipe.projeto.ProjetoFinal.model.Pessoa;
+import br.com.unipe.projeto.ProjetoFinal.model.Telefone;
 import br.com.unipe.projeto.ProjetoFinal.model.dto.PessoaDTO;
+import br.com.unipe.projeto.ProjetoFinal.repository.EnderecoRepository;
 import br.com.unipe.projeto.ProjetoFinal.repository.PessoaRepository;
+import br.com.unipe.projeto.ProjetoFinal.repository.TelefoneRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,18 +20,24 @@ import java.util.Optional;
 public class PessoaController {
 
     @Autowired
-    private PessoaRepository repository;
+    private PessoaRepository pessoaRepository;
+
+    @Autowired
+    private EnderecoRepository enderecoRepository;
+
+    @Autowired
+    private TelefoneRepository telefoneRepository;
 
     @GetMapping
     public ResponseEntity<List<Pessoa>> listarTodos(){
-        List<Pessoa> pessoasList = repository.findAll();
+        List<Pessoa> pessoasList = pessoaRepository.findAll();
         return ResponseEntity.status(200).body(pessoasList);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Pessoa> buscarPorId(@PathVariable("id") Integer pessoaId){
 
-        Optional pessoaPorId = repository.findById(pessoaId);
+        Optional pessoaPorId = pessoaRepository.findById(pessoaId);
 
         if(pessoaPorId.isPresent()){
             Pessoa entidade = (Pessoa) pessoaPorId.get();
@@ -39,7 +50,7 @@ public class PessoaController {
     @GetMapping("/por-cpf/{cpf}")
     public ResponseEntity<Pessoa> buscarPorCpf(@PathVariable("cpf") String cpf){
 
-        Pessoa pessoaPorCpf = repository.findByCpf(cpf);
+        Pessoa pessoaPorCpf = pessoaRepository.findByCpf(cpf);
 
         if(pessoaPorCpf != null){
             return ResponseEntity.status(200).body(pessoaPorCpf);
@@ -51,7 +62,7 @@ public class PessoaController {
     @PostMapping
     public ResponseEntity<?> criarNovaPessoa(@RequestBody PessoaDTO dto){
 
-        Pessoa pessoaTemp = repository.findByCpf(dto.getCpf());
+        Pessoa pessoaTemp = pessoaRepository.findByCpf(dto.getCpf());
         System.out.println("pessoaTemp: "+pessoaTemp);
 
         if(pessoaTemp != null){
@@ -62,8 +73,21 @@ public class PessoaController {
         entidade.setNome(dto.getNome());
         entidade.setSexo(dto.getSexo());
         entidade.setCpf(dto.getCpf());
+        pessoaRepository.save(entidade);
 
-        repository.save(entidade);
+        Endereco endereco = dto.getEndereco();
+        enderecoRepository.save(endereco);
+
+        List<Telefone> telefones = dto.getTelefones();
+        for(Telefone f: telefones){
+            f.setPessoa(entidade);
+            telefoneRepository.save(f);
+        }
+
+        entidade.setEndereco(endereco);
+        entidade.setTelefones(telefones);
+
+        pessoaRepository.save(entidade);
 
         return ResponseEntity.status(201).body("Cadastro de "+ entidade.getNome() + " realizado com sucesso.");
     }
@@ -71,15 +95,20 @@ public class PessoaController {
     @PutMapping("/editar/{id}")
     public ResponseEntity<?> editar(@PathVariable("id") Integer pessoaId, @RequestBody PessoaDTO dto){
 
-        Optional pessoaPorId = repository.findById(pessoaId);
+        Optional pessoaPorId = pessoaRepository.findById(pessoaId);
 
         if(pessoaPorId.isPresent()){
             Pessoa entidade = (Pessoa) pessoaPorId.get();
             entidade.setNome(dto.getNome());
             entidade.setSexo(dto.getSexo());
             entidade.setCpf(dto.getCpf());
+//            entidade.setTelefones(dto.getTelefones());
+//            entidade.setEndereco(dto.getEndereco());
 
-            repository.save(entidade);
+
+
+
+            pessoaRepository.save(entidade);
             return ResponseEntity.status(200).body("Pessoa "+ entidade.getNome() + " editada com sucesso.");
         }
 
@@ -89,11 +118,11 @@ public class PessoaController {
     @DeleteMapping("/deletar/{id}")
     public ResponseEntity<?> deletarPorId(@PathVariable("id") Integer pessoaId){
         System.out.println("Chegou no deletar");
-        Optional pessoaPorId = repository.findById(pessoaId);
+        Optional pessoaPorId = pessoaRepository.findById(pessoaId);
 
         if(pessoaPorId.isPresent()){
             Pessoa entidade = (Pessoa) pessoaPorId.get();
-            repository.delete(entidade);
+            pessoaRepository.delete(entidade);
             return ResponseEntity.status(204).body(null);
         }
 
@@ -103,10 +132,10 @@ public class PessoaController {
     @DeleteMapping("/deletar/por-cpf/{cpf}")
     public ResponseEntity<Pessoa> deletarPorCpf(@PathVariable("cpf") String cpf){
 
-        Pessoa pessoaPorCpf = repository.findByCpf(cpf);
+        Pessoa pessoaPorCpf = pessoaRepository.findByCpf(cpf);
 
         if(pessoaPorCpf != null){
-            repository.delete(pessoaPorCpf);
+            pessoaRepository.delete(pessoaPorCpf);
             return ResponseEntity.status(204).body(null);
         }
 
@@ -116,9 +145,9 @@ public class PessoaController {
     @DeleteMapping("/deletar/todos")
     public ResponseEntity<Pessoa> deletarTodos(){
 
-        List<Pessoa> pessoaList = repository.findAll();
+        List<Pessoa> pessoaList = pessoaRepository.findAll();
 
-        repository.deleteAll(pessoaList);
+        pessoaRepository.deleteAll(pessoaList);
 
         return ResponseEntity.status(204).body(null);
     }
