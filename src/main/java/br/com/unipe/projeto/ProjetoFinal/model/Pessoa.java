@@ -28,7 +28,7 @@ public class Pessoa {
     private String cpf;
 
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pessoa")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pessoa",cascade = CascadeType.ALL)
     private List<Telefone> telefones;
 
     @ManyToOne
