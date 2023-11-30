@@ -68,6 +68,33 @@ public class PalestraController {
 
         return ResponseEntity.status(201).body("Cadastro da palestra " + palestra.getNomePalestra() + " realizado com sucesso.");
     }
+    @PostMapping("/associar")
+    public ResponseEntity<?> associarPalestrantes(@RequestBody PalestraDTO dto) {
+
+        List<Integer> palestrasId = dto.getPalestrasId();
+        List<Palestra> palestras = new ArrayList<>();
+        for(Integer i : palestrasId){
+            Palestra p = palestraRepository.findById(i).orElse(null);
+            palestras.add(p);
+        }
+
+        List<Integer> palestrantesId = dto.getPalestrantesId();
+        List<Pessoa> palestrantes = new ArrayList<>();
+        for(Integer i : palestrantesId){
+            Pessoa p = pessoaRepository.findById(i).orElse(null);
+            palestrantes.add(p);
+            p.setPalestras(palestras);
+            pessoaRepository.save(p);
+        }
+        for(int i = 0; i < palestras.size(); i++){
+            Palestra p = palestras.get(i);
+            p.setPalestrantes(palestrantes);
+            palestraRepository.save(p);
+        }
+
+
+        return ResponseEntity.status(201).body("Associação  realizada com sucesso.");
+    }
 
     @PutMapping("/editar/{id}")
     public ResponseEntity<?> editar(@PathVariable("id") Integer palestraId, @RequestBody PalestraDTO dto) {
