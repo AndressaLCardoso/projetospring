@@ -46,15 +46,15 @@ public class PalestraController {
         palestra.setNomePalestra(dto.getNomePalestra());
         palestraRepository.save(palestra);
 
-        List<Integer> palestrantesId = dto.getPalestrantesId();
-        List<Pessoa> palestrantes = new ArrayList<>();
-        for(Integer i : palestrantesId){
-            Pessoa p = pessoaRepository.findById(i).orElse(null);
-            palestrantes.add(p);
-//            p.setPalestras();
-        }
-        palestra.setPalestrantes(palestrantes);
-        palestraRepository.save(palestra);
+//        List<Integer> palestrantesId = dto.getPalestrantesId();
+//        List<Pessoa> palestrantes = new ArrayList<>();
+//        for(Integer i : palestrantesId){
+//            Pessoa p = pessoaRepository.findById(i).orElse(null);
+//            palestrantes.add(p);
+////            p.setPalestras();
+//        }
+//        palestra.setPalestrantes(palestrantes);
+//        palestraRepository.save(palestra);
 
 
 //        for (Integer idPalestrante : idPalestrantes) {
