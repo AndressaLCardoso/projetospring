@@ -23,7 +23,7 @@ public class Palestra {
 
     @JsonBackReference
     @ManyToMany(mappedBy = "palestras")
-    private List<Palestrante> palestrantes;
+    private List<Pessoa> palestrantes;
 
     // Outros atributos e métodos conforme necessário
 }

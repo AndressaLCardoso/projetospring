@@ -39,7 +39,7 @@ public class Pessoa {
 
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
-            name = "palestrante_palestra",
+            name = "pessoa_palestra",
             joinColumns = @JoinColumn(name = "pessoa"), // colocar nome da tabel de pessoa
             inverseJoinColumns = @JoinColumn(name = "palestra_id")
     )

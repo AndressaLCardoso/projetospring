@@ -1,12 +1,15 @@
 package br.com.unipe.projeto.ProjetoFinal.controller;
 
 import br.com.unipe.projeto.ProjetoFinal.model.Palestra;
+import br.com.unipe.projeto.ProjetoFinal.model.Pessoa;
 import br.com.unipe.projeto.ProjetoFinal.model.dto.PalestraDTO;
 import br.com.unipe.projeto.ProjetoFinal.repository.PalestraRepository;
+import br.com.unipe.projeto.ProjetoFinal.repository.PessoaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,7 +21,10 @@ public class PalestraController {
     private PalestraRepository palestraRepository;
 
     @Autowired
-    private PalestranteRepository palestranteRepository;
+    private PessoaRepository pessoaRepository;
+
+//    @Autowired
+//    private PalestranteRepository palestranteRepository;
 
     @GetMapping
     public ResponseEntity<List<Palestra>> listarTodas() {
@@ -40,16 +46,25 @@ public class PalestraController {
         palestra.setNomePalestra(dto.getNomePalestra());
         palestraRepository.save(palestra);
 
-        List<Integer> idPalestrantes = dto.getIdPalestrantes();
-
-        for (Integer idPalestrante : idPalestrantes) {
-            Optional<Palestrante> palestranteOptional = palestranteRepository.findById(idPalestrante);
-            palestranteOptional.ifPresent(palestrante -> {
-                palestra.getPalestrantes().add(palestrante);
-                palestrante.getPalestras().add(palestra);
-                palestranteRepository.save(palestrante);
-            });
+        List<Integer> palestrantesId = dto.getPalestrantesId();
+        List<Pessoa> palestrantes = new ArrayList<>();
+        for(Integer i : palestrantesId){
+            Pessoa p = pessoaRepository.findById(i).orElse(null);
+            palestrantes.add(p);
+//            p.setPalestras();
         }
+        palestra.setPalestrantes(palestrantes);
+        palestraRepository.save(palestra);
+
+
+//        for (Integer idPalestrante : idPalestrantes) {
+//            Optional<Pessoa> palestranteOptional = pessoaRepository.findById(idPalestrante);
+//            palestranteOptional.ifPresent(palestrante -> {
+//                palestra.getPalestrantes().add(palestrante);
+//                palestrante.getPalestras().add(palestra);
+//                pessoaRepository.save(palestrante);
+//            });
+//        }
 
         return ResponseEntity.status(201).body("Cadastro da palestra " + palestra.getNomePalestra() + " realizado com sucesso.");
     }
@@ -64,18 +79,18 @@ public class PalestraController {
             palestraRepository.save(palestra);
 
             // Remova os palestrantes existentes associados à palestra
-            palestra.getPalestrantes().clear();
+//            palestra.getPalestrantes().clear();
 
-            List<Integer> idPalestrantes = dto.getIdPalestrantes();
+            List<Integer> idPalestrantes = dto.getPalestrantesId();
 
-            for (Integer idPalestrante : idPalestrantes) {
-                Optional<Palestrante> palestranteOptional = palestranteRepository.findById(idPalestrante);
-                palestranteOptional.ifPresent(palestrante -> {
-                    palestra.getPalestrantes().add(palestrante);
-                    palestrante.getPalestras().add(palestra);
-                    palestranteRepository.save(palestrante);
-                });
-            }
+//            for (Integer idPalestrante : idPalestrantes) {
+//                Optional<Pessoa> palestranteOptional = pessoaRepository.findById(idPalestrante);
+//                palestranteOptional.ifPresent(palestrante -> {
+//                    palestra.getPalestrantes().add(palestrante);
+//                    palestrante.getPalestras().add(palestra);
+//                    pessoaRepository.save(palestrante);
+//                });
+//            }
 
             return ResponseEntity.status(200).body("Palestra " + palestra.getNomePalestra() + " editada com sucesso.");
         }
