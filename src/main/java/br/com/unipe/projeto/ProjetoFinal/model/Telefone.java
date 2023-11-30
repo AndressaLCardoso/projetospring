@@ -23,4 +23,7 @@ public class Telefone {
     @ManyToOne
     private Pessoa pessoa;
 
+    @ManyToOne
+    private Palestrante palestrante;
+
 }

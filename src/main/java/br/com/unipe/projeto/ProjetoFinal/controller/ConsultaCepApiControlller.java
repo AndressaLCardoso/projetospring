@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 @RestController
-@RequestMapping("consulta-cep")
-
+@RequestMapping("/consulta-cep")
 public class ConsultaCepApiControlller {
-    @GetMapping("{cep}")
-
+    @GetMapping("/{cep}")
     public CepResultDTO consultaCep(@PathVariable("cep") String cep){
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<CepResultDTO> resp = restTemplate.getForEntity(
