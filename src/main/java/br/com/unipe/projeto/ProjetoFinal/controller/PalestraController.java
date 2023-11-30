@@ -1,11 +1,8 @@
 package br.com.unipe.projeto.ProjetoFinal.controller;
 
 import br.com.unipe.projeto.ProjetoFinal.model.Palestra;
-import br.com.unipe.projeto.ProjetoFinal.model.Palestrante;
-import br.com.unipe.projeto.ProjetoFinal.model.Telefone;
 import br.com.unipe.projeto.ProjetoFinal.model.dto.PalestraDTO;
 import br.com.unipe.projeto.ProjetoFinal.repository.PalestraRepository;
-import br.com.unipe.projeto.ProjetoFinal.repository.PalestranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

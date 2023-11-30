@@ -17,7 +17,7 @@ public class ConsultaCepApiControlller {
     public CepResultDTO consultaCep(@PathVariable("cep") String cep){
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<CepResultDTO> resp = restTemplate.getForEntity(
-                String.format("viacep.com.br/ws/%s/json/", cep),CepResultDTO.class);
+                String.format("https://viacep.com.br/ws/%s/json/", cep),CepResultDTO.class);
         return resp.getBody();
     }
 }

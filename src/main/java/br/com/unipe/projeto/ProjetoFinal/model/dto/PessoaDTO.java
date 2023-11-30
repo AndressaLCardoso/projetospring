@@ -23,4 +23,8 @@ public class PessoaDTO {
 
     private Endereco endereco;
 
+    private String identificacao;
+
+    private List<String> numerosContato;
+
 }

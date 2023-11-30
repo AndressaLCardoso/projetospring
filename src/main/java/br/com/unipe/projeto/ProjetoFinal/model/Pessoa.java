@@ -1,5 +1,6 @@
 package br.com.unipe.projeto.ProjetoFinal.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -33,5 +34,16 @@ public class Pessoa {
 
     @ManyToOne
     private Endereco endereco;
+
+    private String identificacao;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "palestrante_palestra",
+            joinColumns = @JoinColumn(name = "pessoa"), // colocar nome da tabel de pessoa
+            inverseJoinColumns = @JoinColumn(name = "palestra_id")
+    )
+    @JsonBackReference
+    private List<Palestra> palestras;
 
 }
